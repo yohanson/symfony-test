@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Symfony-test home{% endblock %}
+
+{% block body %}
+
+<div class="center-wrapper">
+    <h1>Welcome!</h1>
+
+    We have:
+    <ul>
+        <li><a href="{{ path('app_logout') }}">Logout</a></li>
+    </ul>
+</div>
+{% endblock %}
