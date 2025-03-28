@@ -7,7 +7,7 @@
 ```
 docker-compose up
 ```
-Go to [http://localhost:8000]
+Go to http://localhost:8000
 
 ### Right on your host, without docker
 
@@ -28,4 +28,4 @@ Then launch symfony's web server:
 symfony serve
 ```
 
-Go to [http://localhost:8000]
+Go to http://localhost:8000
