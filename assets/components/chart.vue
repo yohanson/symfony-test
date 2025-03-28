@@ -7,12 +7,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, defineProps, watch } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { NConfigProvider } from 'naive-ui';
 import Chart from 'chart.js/auto';
 import { toISODateString } from '/assets/utils/date.js';
 
-// Reference to the canvas element
 const chartCanvas = ref(null);
 
 const props = defineProps({
@@ -20,28 +19,28 @@ const props = defineProps({
         type: Array,
         required: true,
     },
-    column: {
+    label: {
         type: String,
-        required: true,
+        required: false,
     },
+    dateRange: {
+        type: Array,
+        required: true,
+    }
 });
-
 
 const chartData = computed(() => {
     if (!props.data.length) return {};
-    let data = {};
-    let prevDate = props.data[0].date;
-    let dailySales = 0;
+    let data = initData();
     props.data.forEach((row) => {
         let label = toISODateString(row.date);
-        data[label] ??= 0;
         data[label] += row.price * row.quantity;
-    })
+    });
 
     return {
         labels: Object.keys(data).sort(),
         datasets: [{
-            label: '₽',
+            label: props.label,
             data: data,
             backgroundColor: 'rgba(54, 162, 235, 0.5)',
             borderColor: 'rgba(54, 162, 235, 1)',
@@ -49,6 +48,17 @@ const chartData = computed(() => {
         }],
     }
 });
+
+function initData() {
+    if (!props.dateRange) {
+        return {};
+    }
+    let data = {};
+    for (let date = props.dateRange[0]; date <= props.dateRange[1]; date += 86400000) {
+        data[toISODateString(date)] = 0;
+    }
+    return data;
+}
 
 let chartInstance = null;
 

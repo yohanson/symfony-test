@@ -2,21 +2,18 @@
     <n-config-provider>
         <div class="container">
             <div>
-                <n-date-picker
-                    v-model:value="range"
-                    type="daterange"
-                    clearable
-                    :close-on-select="true"
-                    :first-day-of-week="0"
-                    :is-date-disabled="isDateDisabled"
-                    @clear="onClearDateRange"
+                <date-picker
+                    v-model="range"
+                    :minDate="minDate"
+                    :maxDate="maxDate"
                 />
             </div>
 
             <div class="chart">
                 <chart
                     :data="filteredData"
-                    column="price"
+                    :dateRange="range"
+                    label="₽"
                 />
             </div>
 
@@ -26,25 +23,26 @@
             :data="filteredData"
             :pagination="pagination"
             :bordered="false"
-            :loading="loading"
+            :loading="false"
             @update:sorter="handleSorterChange"
-            allow-checking-not-loaded
+            @update:filters="handleFilterChange"
             min-height="300"
         />
     </n-config-provider>
 </template>
 
 <script setup>
-import { defineComponent, h, onMounted, computed, ref, nextTick } from "vue";
+import { onMounted, computed, ref } from "vue";
 import chart from './chart.vue';
+import datePicker from './date-picker.vue';
 import { toISODateString } from '/assets/utils/date.js';
 
 const minDate = ref(Date.now());
 const maxDate = ref(Date.now());
 const range = ref([minDate.value, maxDate.value])
 
-const loading = ref(true);
 const pagination = ref(false);
+const categoryFilter = ref(null);
 const data = ref([]);
 const filteredData = computed(() => {
     if (!data.value) {
@@ -58,6 +56,7 @@ const filteredData = computed(() => {
             return false
         }
         return range.value[0] <= row.date && row.date <= range.value[1]
+                && (!categoryFilter.value || !categoryFilter.value.length || categoryFilter.value.includes(row.category))
     });
 });
 const columns = ref([]);
@@ -74,7 +73,6 @@ async function fetchData() {
     maxDate.value = data.value.reduce((a, b) => b.date > a ? b.date : a, data.value[0].date);
     range.value = [minDate.value, maxDate.value];
     columns.value = createColumns(data.value[0]);
-    loading.value = false;
 };
 
 function dateRender(row) {
@@ -83,10 +81,6 @@ function dateRender(row) {
 
 function toLocalTimestamp(datestring) {
     return new Date(datestring).getTime() + (new Date()).getTimezoneOffset() * 60000;
-}
-
-function isDateDisabled(date) {
-    return date < minDate.value || date > maxDate.value;
 }
 
 function createColumns(headerRow) {
@@ -125,22 +119,20 @@ function handleSorterChange(sorter) {
             column.sortOrder = false;
             return;
         }
-        if (column.key === sorter.columnKey)
-          column.sortOrder = sorter.order;
-        else column.sortOrder = false;
+        if (column.key === sorter.columnKey) {
+            column.sortOrder = sorter.order;
+        } else {
+            column.sortOrder = false;
+        }
     });
 }
-
-async function onClearDateRange() {
-    await nextTick();
-    range.value = [minDate.value, maxDate.value];
+function handleFilterChange(filters, sourceColumn) {
+    categoryFilter.value = filters['category'];
 }
 
 onMounted(() => {
     fetchData()
 })
-
-
 </script>
 
 <style scoped>
