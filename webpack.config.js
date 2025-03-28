@@ -23,6 +23,12 @@ Encore
     .addEntry('app', './assets/app.js')
     .enableVueLoader(() => {}, { runtimeCompilerBuild: false })
 
+    .configureDefinePlugin((options) => {
+        options.__VUE_OPTIONS_API__ = JSON.stringify(false);
+        options.__VUE_PROD_DEVTOOLS__ = JSON.stringify(false);
+        options.__VUE_PROD_HYDRATION_MISMATCH_DETAILS__ = JSON.stringify(false);
+    })
+
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
 

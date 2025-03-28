@@ -9,5 +9,8 @@
 import './styles/app.css';
 
 import { createApp } from 'vue';
-import report from './components/report.vue';
-createApp(report).mount('#app')
+import naive from 'naive-ui';
+import report from './components/report-naive.vue';
+const app = createApp(report);
+app.use(naive);
+app.mount('#app');

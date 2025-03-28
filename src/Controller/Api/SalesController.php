@@ -14,13 +14,16 @@ final class SalesController extends AbstractController
     public function index(EntityManagerInterface $em): Response
     {
         $data = $em->createQuery(
-            'SELECT s.date, p.name, se.quantity, c.name as category ' .
+            'SELECT s.date, p.name, p.price, se.quantity, c.name as category ' .
             'FROM ' . SaleEntry::class . ' se ' .
             'JOIN se.sale s ' . 
             'JOIN se.product p ' . 
             'JOIN p.category c ' .
             ''
         )->getArrayResult();
+        array_walk($data, function(&$row) {
+            $row['date'] = $row['date']->format('Y-m-d');
+        });
         return $this->json($data, context: ['json_encode_options' => JSON_UNESCAPED_UNICODE]);
     }
 }
