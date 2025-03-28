@@ -31,7 +31,7 @@ services:
     working_dir: /app
     volumes:
       - ./:/app
-    command: npm run build
+    command: npm install && npm run build
 
   db:
     image: mariadb:11.4

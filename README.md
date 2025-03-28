@@ -19,7 +19,19 @@ You'll need:
 * A database. Create a DB, add a user, grant him permissions to that db.
 * Configure symfony's DB connection in project's .env file.
 
+Install dependencies for PHP side
 ```
+composer install
+```
+
+Update DB structure
+```
+bin/console doctrine:mig:mig
+```
+
+Install dependencies for JS side, compile
+```
+npm install
 npm run build
 ```
 
