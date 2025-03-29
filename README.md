@@ -1,3 +1,7 @@
+Работал с Symfony и Vue первый раз. Symfony имеет много общего со Slim Framework, который мне знаком. Vue увидел впервые.
+
+----
+
 # Symfony + Vue test job
 
 ## How to launch
